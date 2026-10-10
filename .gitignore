@@ -1,2 +1,28 @@
-venv/
+.venv/
 .env
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+.pytest_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Generated evaluation output
+report.json
+
+# Local project artifacts
+vector_db/
+knowledge_base/
+*.sqlite3
+*.png
+*.log
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
