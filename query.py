@@ -125,11 +125,14 @@ def search(question, top_k=3):
 
     return results
 
+ 
 
 def display_results(question, results):
     """
     Pretty-print the search results.
     """
+
+    Source_Files = []
 
     print("=" * 60)
     print(f"QUESTION: {question}")
@@ -156,6 +159,14 @@ def display_results(question, results):
             print(f"    [...{len(doc) - 300} more characters]")
 
     print("\n" + "=" * 60)
+  
+def display_source_files(results):
+    return [
+        meta.get("source", "N/A")
+        for meta in results["metadatas"][0]
+    ]
+
+   
 
 
 # ==========================================
@@ -244,3 +255,6 @@ if __name__ == "__main__":
         answer = generate_rag_response(question, results, GROQ_API_KEY)
         print(answer)
         print("=" * 60)
+        print("Sorce_Files:")
+       
+        print(display_source_files(results))
