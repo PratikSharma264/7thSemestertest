@@ -85,19 +85,7 @@ sufficiency judge. Both options use Groq for RAG answer generation. The app
 loads MedCPT from Hugging Face on first use and requires the `research_abstracts`
 collection created during ingestion.
 
-## Generate the testcase answers
 
-`testing\model_testcases.csv` contains the questions to process. With the
-knowledge base ingested and `GROQ_API_KEY` set, run:
-
-```powershell
-python testing\run_model_testcases.py
-```
-
-The script writes each generated answer and its sufficiency label (`1` =
-sufficient, `0` = insufficient) to the CSV as it goes. It can be rerun to
-resume after an interruption. This uses the local BioMedBERT classifier, so
-the fine-tuned `model.safetensors` must be available as described above.
 
 
 Other useful commands, run from the repository root:
