@@ -9,6 +9,7 @@ __pycache__/
 .coverage
 .coverage.*
 htmlcov/
+/testing/
 
 # Generated evaluation output
 report.json
@@ -19,6 +20,8 @@ knowledge_base/
 *.sqlite3
 *.png
 *.log
+/biomedbert_sufficiency/checkpoint-*/
+/biomedbert_sufficiency/model.safetensors
 
 # OS/editor files
 .DS_Store
