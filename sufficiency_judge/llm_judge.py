@@ -13,8 +13,8 @@ load_dotenv()
 client = None
 
 
-def judge_sufficiency(question, rag_answer, dataset=None):
-    """Evaluate a generated answer against labeled examples from the dataset."""
+def judge_sufficiency(question, rag_answer, knowledge_context=None, dataset=None):
+    """Judge an answer using reference examples and retrieved KB passages."""
     if not isinstance(question, str) or not question.strip():
         raise ValueError("question must be a non-empty string.")
     if not isinstance(rag_answer, str) or not rag_answer.strip():
@@ -52,7 +52,8 @@ def judge_sufficiency(question, rag_answer, dataset=None):
     prompt = build_prompt(
         question,
         rag_answer,
-        reference_df
+        reference_df,
+        knowledge_context=knowledge_context,
     )
 
     response = client.models.generate_content(

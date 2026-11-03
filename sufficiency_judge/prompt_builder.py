@@ -3,7 +3,7 @@ import json
 import pandas as pd
 
 
-def build_prompt(question, rag_answer, reference_df):
+def build_prompt(question, rag_answer, reference_df, knowledge_context=None):
 
     # Keep requests compact while giving the judge examples of both classes.
     # The full reference CSV can exceed practical request limits.
@@ -35,6 +35,23 @@ def build_prompt(question, rag_answer, reference_df):
         ensure_ascii=False
     )
 
+    knowledge_context = knowledge_context or []
+    evidence_records = []
+    for index, item in enumerate(knowledge_context, start=1):
+        if isinstance(item, dict):
+            evidence_records.append({
+                "passage": index,
+                "source": item.get("source", "N/A"),
+                "content": item.get("content", ""),
+            })
+        else:
+            evidence_records.append({
+                "passage": index,
+                "source": "N/A",
+                "content": str(item),
+            })
+    knowledge_evidence = json.dumps(evidence_records, ensure_ascii=False)
+
     prompt = f"""
 You are an independent evaluator of a Retrieval-Augmented
 Generation (RAG) system.
@@ -42,12 +59,17 @@ Generation (RAG) system.
 Your task is to determine whether the RAG-generated answer
 is sufficient to answer the user's question.
 
-You must use the supplied labelled reference dataset
-to understand the distinction between sufficient and
-insufficient answers.
+Use both supplied sources for different purposes:
+- The labelled reference dataset shows examples of sufficient
+  and insufficient answers and calibrates the label distinction.
+- The retrieved knowledge-base passages provide the evidence
+  for judging the current answer's relevance and coverage.
 
 REFERENCE DATASET:
 {dataset_context}
+
+RETRIEVED KNOWLEDGE-BASE PASSAGES:
+{knowledge_evidence}
 
 CURRENT QUESTION:
 {question}
@@ -61,8 +83,10 @@ IMPORTANT INSTRUCTIONS:
    The answer may use Markdown, including headings, lists,
    tables, bold text, or citations. Interpret the rendered
    meaning of that content; Markdown syntax is not a defect.
-2. Use the reference dataset to understand the expected
-   level of completeness and relevance.
+2. Use the reference examples to calibrate completeness and
+   relevance. Use the retrieved passages to assess whether the
+   current answer addresses the question and is supported by the
+   available knowledge-base evidence.
 3. A sufficient answer must address the actual question
    and provide enough relevant information.
 4. An answer that is merely related to the question is
@@ -70,12 +94,14 @@ IMPORTANT INSTRUCTIONS:
 5. An answer that provides only a small portion of the
    requested information should be considered insufficient
    when important information is missing.
-6. Do not assume that information is correct merely
-   because it appears in the reference dataset.
-7. Do not invent facts or assume access to retrieved
-   documents.
+6. Do not treat reference answers as evidence for the current
+   question; they are examples for label calibration only.
+7. Do not invent facts or assume access to documents beyond the
+   supplied retrieved passages.
 8. Do not use outside knowledge to fill missing information.
-9. If the answer says that the information is unavailable
+9. If the retrieved passages do not contain enough evidence,
+   reflect that limitation in the judgement. If the answer says
+   that the information is unavailable
    or cannot be found, judge whether that response actually
    answers the question.
 10. Return a binary label:

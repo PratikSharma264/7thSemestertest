@@ -342,11 +342,25 @@ def classify_sufficiency(question, rag_answer):
     }
 
 
-def judge_sufficiency(question, rag_answer):
-    """Evaluate answer sufficiency with the Gemini LLM judge."""
+def judge_sufficiency(question, rag_answer, results):
+    """Judge answer sufficiency using labels plus retrieved KB passages."""
     from sufficiency_judge.llm_judge import judge_sufficiency as run_judge
 
-    return run_judge(question, rag_answer)
+    documents = results.get("documents", [[]])[0]
+    metadatas = results.get("metadatas", [[]])[0]
+    knowledge_context = [
+        {
+            "source": metadata.get("source", "N/A"),
+            "content": document,
+        }
+        for document, metadata in zip(documents, metadatas)
+    ]
+
+    return run_judge(
+        question,
+        rag_answer,
+        knowledge_context=knowledge_context,
+    )
 
 
 def choose_evaluator():
@@ -461,7 +475,7 @@ if __name__ == "__main__":
             display_sufficiency(classify_sufficiency(question, answer))
         else:
             try:
-                display_judge_result(judge_sufficiency(question, answer))
+                display_judge_result(judge_sufficiency(question, answer, results))
             except Exception as error:
                 print(f"LLM sufficiency judgement failed: {error}")
 
