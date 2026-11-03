@@ -99,13 +99,6 @@ sufficient, `0` = insufficient) to the CSV as it goes. It can be rerun to
 resume after an interruption. This uses the local BioMedBERT classifier, so
 the fine-tuned `model.safetensors` must be available as described above.
 
-## Tests and utilities
-
-Run the unit tests:
-
-```powershell
-python -m pytest
-```
 
 Other useful commands, run from the repository root:
 
