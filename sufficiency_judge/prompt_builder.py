@@ -100,11 +100,27 @@ IMPORTANT INSTRUCTIONS:
    supplied retrieved passages.
 8. Do not use outside knowledge to fill missing information.
 9. If the retrieved passages do not contain enough evidence,
-   reflect that limitation in the judgement. If the answer says
-   that the information is unavailable
-   or cannot be found, judge whether that response actually
-   answers the question.
-10. Return a binary label:
+   reflect that limitation in the judgement. A truthful or
+   appropriately cautious refusal does not, by itself, make the
+   answer sufficient.
+10. If the user asks for a fact, finding, explanation, estimate,
+    comparison, or recommendation and the RAG answer only says
+    that the information is unavailable, not reported, or cannot
+    be found in the supplied evidence, label it INSUFFICIENT (0). The
+    answer has not supplied the requested information, even when
+    the retrieved passages genuinely lack that information.
+11. An answer that says information is unavailable may be
+    SUFFICIENT (1) only when the user explicitly asks whether the
+    supplied retrieved passages contain or report that
+    information, and the answer directly and accurately answers
+    that evidence-availability question using those passages.
+12. Judge answer sufficiency separately from whether the RAG
+    system behaved responsibly. Do not label a non-answer
+    SUFFICIENT merely because it avoided inventing unsupported
+    facts. In that case, recognize the grounding as appropriate
+    in the reason, but still assign INSUFFICIENT for not answering
+    the user's substantive question.
+13. Return a binary label:
     1 = Sufficient
     0 = Insufficient
 

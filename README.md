@@ -45,6 +45,11 @@ Create a `.env` file in the repository root:
 GROQ_API_KEY=your_groq_api_key
 ```
 
+Before generating an answer, Groq checks the retrieved passages for relevance.
+Only passages it accepts are used for the answer, sent to the Gemini judge, or
+shown in the source list. If none are relevant or the check fails, the app
+abstains and shows no source files.
+
 For the Gemini sufficiency judge, also add:
 
 ```dotenv
@@ -69,8 +74,8 @@ re-running it replaces the existing collection.
 
 ## Run the interactive RAG application
 
-For classifier-based sufficiency evaluation, place the fine-tuned
-`model.safetensors` in `biomedbert_sufficiency\`, alongside the tracked
+For classifier-based sufficiency evaluation (choice **1** or **3**), place
+the fine-tuned `model.safetensors` in `biomedbert_sufficiency\`, alongside the tracked
 `config.json` and tokenizer files. Obtain this weights file from the project’s
 training output; it is not included in the repository.
 
@@ -80,10 +85,11 @@ Then run:
 python query.py
 ```
 
-Choose **1** for the local BioMedBERT classifier or **2** for the Gemini
-sufficiency judge. Both options use Groq for RAG answer generation. The app
-loads MedCPT from Hugging Face on first use and requires the `research_abstracts`
-collection created during ingestion.
+Choose **1** for the local BioMedBERT classifier, **2** for the Gemini
+sufficiency judge, or **3** to run both evaluators on the same RAG answer and
+retrieved passages. The app uses Groq for RAG answer generation, loads MedCPT
+from Hugging Face on first use, and requires the `research_abstracts` collection
+created during ingestion.
 
 
 

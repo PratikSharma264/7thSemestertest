@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 
-DATASET_PATH = Path(__file__).resolve().with_name("cls.csv")
+DATASET_PATH = Path(__file__).resolve().with_name("dataset_A.csv")
 
 REQUIRED_COLUMNS = [
     "question",
